@@ -1,12 +1,12 @@
 # Image Processing API
-1. #### Details about project
+#### Details about project
 project is api that take 
 1. **filename** : `is photo in images folder`
 2. **width** : `integer value`
 3. **height** : `integer value`
 api make processing to photo by resizing image by input width height
 
-2. #### how to run project
+#### how to run project
 1. Download project
 2. Open terminal and write `npm run install`
 3. To run project write `npm run start`
@@ -17,7 +17,7 @@ api make processing to photo by resizing image by input width height
 8. To prettier project write `npm run prettier`
 
 
-3. #### Technologies used in project
+#### Technologies used in project
 1. node js
 2. express
 3. jasmine
@@ -25,7 +25,7 @@ api make processing to photo by resizing image by input width height
 5. typescript
 6. sharp package for image Processing
 
-4. #### send query to api
+#### send query to api
 1. open your browser and write `http://localhost:3000/api?filename=fjord&width=200&height=200`
 2. change in parameter
 

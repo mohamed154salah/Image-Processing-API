@@ -41,6 +41,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var supertest_1 = __importDefault(require("supertest"));
 var index_1 = __importDefault(require("../index"));
+var path_1 = __importDefault(require("path"));
+var imageProcessing_1 = __importDefault(require("../utilities/imageProcessing"));
+var promises_1 = __importDefault(require("fs/promises"));
 // create a request object
 var request = (0, supertest_1.default)(index_1.default);
 describe("Test endpoint response", function () {
@@ -88,6 +91,28 @@ describe("Test endpoint response", function () {
                 case 1:
                     response = _a.sent();
                     expect(response.status).toBe(400);
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+});
+describe("test processing Image", function () {
+    it("test Image processed was successfully created", function () { return __awaiter(void 0, void 0, void 0, function () {
+        var pathFile, pathThumb, width, height, photo;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    pathFile = path_1.default.resolve(__dirname, "../../images/", "fjord" + ".jpg");
+                    pathThumb = path_1.default.resolve(__dirname, "../../thumb/", "fjord" + "500" + "500" + ".jpg");
+                    width = 500;
+                    height = 500;
+                    return [4 /*yield*/, (0, imageProcessing_1.default)(pathFile, pathThumb, width, height)];
+                case 1:
+                    _a.sent();
+                    return [4 /*yield*/, promises_1.default.readFile(pathThumb)];
+                case 2:
+                    photo = (_a.sent()).buffer;
+                    expect(photo).toBeInstanceOf(ArrayBuffer);
                     return [2 /*return*/];
             }
         });

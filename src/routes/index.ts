@@ -3,14 +3,15 @@ import sharp from "sharp";
 import fsp from "fs/promises";
 import fs from "fs";
 import path from "path";
+import imageProcessing from "../utilities/imageProcessing";
 const routes = express.Router();
 
 routes.get("/api", function (req: Request, res: Response) {
-    //check if query parameter sent 
+  //check if query parameter sent 
   if (!req.query.width || !req.query.height || !req.query.filename) {
     res.status(400).send("Please, enter your filename,width,height");
   } else {
-     //save parameter that have been sent 
+    //save parameter that have been sent 
     // eslint-disable-next-line prettier/prettier
     const filename: string = req.query.filename as string;
     // eslint-disable-next-line prettier/prettier
@@ -20,7 +21,7 @@ routes.get("/api", function (req: Request, res: Response) {
     const height = req.query.height
       ? parseInt(req.query.height as string, 10)
       : null;
-    
+
     //get the path to thumb and images folders  
     const pa = path.resolve(__dirname, "../../images/", filename + ".jpg");
     const pathThumb = path.resolve(
@@ -45,10 +46,8 @@ routes.get("/api", function (req: Request, res: Response) {
         //folder to start processing 
         fs.stat(pa, function (er) {
           if (er == null) {
-            sharp(pa)
-              .resize(width, height)
-              .toFile(pathThumb)
-              .then(() => {
+            try {
+              imageProcessing(pa, pathThumb, width, height).then(() => {
                 fsp
                   .readFile(pathThumb)
                   .then((Data: Buffer) => {
@@ -58,6 +57,10 @@ routes.get("/api", function (req: Request, res: Response) {
                     res.status(500).send("Error occurred processing the image");
                   });
               });
+            }
+            catch (err) {
+              res.status(500).send("Error occurred processing the image" + err);
+            }
           } else if (err.code === "ENOENT") {
             res.send("File not Exists");
           }
@@ -69,7 +72,7 @@ routes.get("/api", function (req: Request, res: Response) {
   }
 });
 //check server work 
-routes.get("/",(req:Request,res:Response)=>{
-    res.send("server is work !")
+routes.get("/", (req: Request, res: Response) => {
+  res.send("server is work !")
 })
 export default routes;

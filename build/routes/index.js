@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var sharp_1 = __importDefault(require("sharp"));
 var promises_1 = __importDefault(require("fs/promises"));
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
+var imageProcessing_1 = __importDefault(require("../utilities/imageProcessing"));
 var routes = express_1.default.Router();
 routes.get("/api", function (req, res) {
     //check if query parameter sent 
@@ -46,19 +46,21 @@ routes.get("/api", function (req, res) {
                 //folder to start processing 
                 fs_1.default.stat(pa_1, function (er) {
                     if (er == null) {
-                        (0, sharp_1.default)(pa_1)
-                            .resize(width_1, height_1)
-                            .toFile(pathThumb_1)
-                            .then(function () {
-                            promises_1.default
-                                .readFile(pathThumb_1)
-                                .then(function (Data) {
-                                res.status(200).contentType("jpg").send(Data);
-                            })
-                                .catch(function () {
-                                res.status(500).send("Error occurred processing the image");
+                        try {
+                            (0, imageProcessing_1.default)(pa_1, pathThumb_1, width_1, height_1).then(function () {
+                                promises_1.default
+                                    .readFile(pathThumb_1)
+                                    .then(function (Data) {
+                                    res.status(200).contentType("jpg").send(Data);
+                                })
+                                    .catch(function () {
+                                    res.status(500).send("Error occurred processing the image");
+                                });
                             });
-                        });
+                        }
+                        catch (err) {
+                            res.status(500).send("Error occurred processing the image" + err);
+                        }
                     }
                     else if (err.code === "ENOENT") {
                         res.send("File not Exists");

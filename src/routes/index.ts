@@ -6,7 +6,7 @@ import path from "path";
 import imageProcessing from "../utilities/imageProcessing";
 const routes = express.Router();
 
-routes.get("/api", function (req: Request, res: Response) {
+routes.get("/api", function (req: Request, res: Response):void {
   //check if query parameter sent 
   if (!req.query.width || !req.query.height || !req.query.filename) {
     res.status(400).send("Please, enter your filename,width,height");
@@ -72,7 +72,7 @@ routes.get("/api", function (req: Request, res: Response) {
   }
 });
 //check server work 
-routes.get("/", (req: Request, res: Response) => {
+routes.get("/", (req: Request, res: Response):void => {
   res.send("server is work !")
 })
 export default routes;

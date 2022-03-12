@@ -23,54 +23,58 @@ routes.get("/api", function (req, res) {
             ? parseInt(req.query.width, 10)
             : null;
         var height_1 = req.query.height
-            ? parseInt(req.query.height, 10)
-            : null;
-        //get the path to thumb and images folders  
-        var pa_1 = path_1.default.resolve(__dirname, "../../images/", filename + ".jpg");
-        var pathThumb_1 = path_1.default.resolve(__dirname, "../../thumb/", filename + width_1 + height_1 + ".jpg");
-        //check if file exists
-        fs_1.default.stat(pathThumb_1, function (err) {
-            if (err == null) {
-                //if file exists in thumb folder just display it   
-                promises_1.default
-                    .readFile(pathThumb_1)
-                    .then(function (Data) {
-                    res.status(200).contentType("jpg").send(Data);
-                })
-                    .catch(function (err) {
-                    res.status(500).send(err);
-                });
-            }
-            else if (err.code === "ENOENT") {
-                // file does not exist in thumb folder check if file exists in images 
-                //folder to start processing 
-                fs_1.default.stat(pa_1, function (er) {
-                    if (er == null) {
-                        try {
-                            (0, imageProcessing_1.default)(pa_1, pathThumb_1, width_1, height_1).then(function () {
-                                promises_1.default
-                                    .readFile(pathThumb_1)
-                                    .then(function (Data) {
-                                    res.status(200).contentType("jpg").send(Data);
-                                })
-                                    .catch(function () {
-                                    res.status(500).send("Error occurred processing the image");
+            ? parseInt(req.query.height, 10) : null;
+        if (!Number(width_1) || !Number(height_1)) {
+            res.status(500).send("Width and height must be a number");
+        }
+        else {
+            //get the path to thumb and images folders  
+            var pa_1 = path_1.default.resolve(__dirname, "../../images/", filename + ".jpg");
+            var pathThumb_1 = path_1.default.resolve(__dirname, "../../thumb/", filename + width_1 + height_1 + ".jpg");
+            //check if file exists
+            fs_1.default.stat(pathThumb_1, function (err) {
+                if (err == null) {
+                    //if file exists in thumb folder just display it   
+                    promises_1.default
+                        .readFile(pathThumb_1)
+                        .then(function (Data) {
+                        res.status(200).contentType("jpg").send(Data);
+                    })
+                        .catch(function (err) {
+                        res.status(500).send(err);
+                    });
+                }
+                else if (err.code === "ENOENT") {
+                    // file does not exist in thumb folder check if file exists in images 
+                    //folder to start processing 
+                    fs_1.default.stat(pa_1, function (er) {
+                        if (er == null) {
+                            try {
+                                (0, imageProcessing_1.default)(pa_1, pathThumb_1, width_1, height_1).then(function () {
+                                    promises_1.default
+                                        .readFile(pathThumb_1)
+                                        .then(function (Data) {
+                                        res.status(200).contentType("jpg").send(Data);
+                                    })
+                                        .catch(function () {
+                                        res.status(500).send("Error occurred processing the image");
+                                    });
                                 });
-                            });
+                            }
+                            catch (err) {
+                                res.status(500).send("Error occurred processing the image" + err);
+                            }
                         }
-                        catch (err) {
-                            res.status(500).send("Error occurred processing the image" + err);
+                        else if (err.code === "ENOENT") {
+                            res.send("File not Exists");
                         }
-                    }
-                    else if (err.code === "ENOENT") {
-                        res.send("File not Exists");
-                    }
-                });
-            }
-            else {
-                console.log("Some other error: ", err.code);
-            }
-        });
+                    });
+                }
+                else {
+                    console.log("Some other error: ", err.code);
+                }
+            });
+        }
     }
 });
 //check server work 

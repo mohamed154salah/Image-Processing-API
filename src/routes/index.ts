@@ -15,13 +15,18 @@ routes.get("/api", function (req: Request, res: Response):void {
     // eslint-disable-next-line prettier/prettier
     const filename: string = req.query.filename as string;
     // eslint-disable-next-line prettier/prettier
+    
+      
     const width = req.query.width
       ? parseInt(req.query.width as string, 10)
       : null;
     const height = req.query.height
-      ? parseInt(req.query.height as string, 10)
-      : null;
+      ? parseInt(req.query.height as string, 10):null;
 
+    if(!Number(width)||!Number(height)){
+      res.status(500).send("Width and height must be a number");
+   
+    }else{
     //get the path to thumb and images folders  
     const pa = path.resolve(__dirname, "../../images/", filename + ".jpg");
     const pathThumb = path.resolve(
@@ -70,6 +75,7 @@ routes.get("/api", function (req: Request, res: Response):void {
       }
     });
   }
+}
 });
 //check server work 
 routes.get("/", (req: Request, res: Response):void => {
